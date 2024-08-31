@@ -33,13 +33,46 @@
 
 Для реализации основного меню можно использовать пример ниже или написать свой
 """
+"""
+Lesson_7
+1. В подпрограмме Мой банковский счет;
+2. Добавить сохранение суммы счета в файл
+3. Добавить сохранение истории покупок в файл
+"""
+import os
+import pickle
+
+FILE_NAME = 'sum_amount.txt'
+balance = 0
+
+if os.path.exists(FILE_NAME):
+    with open(FILE_NAME, 'rb') as f:
+        balance = pickle.load(f)
+
+def save_balance():
+    global balance
+    with open(FILE_NAME, 'wb') as f:
+        pickle.dump(balance, f)
+
+HISTORY_FILE = 'purchase_history.txt'
+purchases_history = {}
+
+if os.path.exists(HISTORY_FILE):
+    with open(HISTORY_FILE, 'rb') as f:
+        purchases_history = pickle.load(f)
+
+def save_purchase_history(history):
+    with open(HISTORY_FILE, 'wb') as f:
+        pickle.dump(history, f)
 
 
 def bank_account():
-    balance = 0
-    purchases_history = {}
+    global balance
+    global purchases_history
 
     while True:
+        print('\n' + '-' * 10 + ' Программа Банковский Счёт ' + '-' * 10)
+        print(f'Текущий баланс: {balance} руб.')
         print('1. Пополнение счета')
         print('2. Покупка')
         print('3. История покупок')
@@ -50,6 +83,7 @@ def bank_account():
         if choice == '1':
             deposit_amount = float(input('Введите сумму для пополнения счета: '))
             balance += deposit_amount
+            save_balance()
             print(f'Счет пополнен на {deposit_amount} руб. Текущий баланс: {balance} руб.')
 
         elif choice == '2':
@@ -59,10 +93,12 @@ def bank_account():
             else:
                 purchase_name = input('Введите название покупки: ')
                 balance -= purchase_amount
+                save_balance()
                 if purchase_name in purchases_history:
                     purchases_history[purchase_name] += purchase_amount
                 else:
                     purchases_history[purchase_name] = purchase_amount
+                save_purchase_history(purchases_history)
                 print(f'Покупка "{purchase_name}" на сумму {purchase_amount} руб. выполнена. Остаток на счете: {balance} руб.')
 
         elif choice == '3':

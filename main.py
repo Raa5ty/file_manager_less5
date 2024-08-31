@@ -55,6 +55,25 @@ def list_files():
     for item in items:
         print(item)
 
+def save_directory_contents():
+    files = [item for item in os.listdir() if os.path.isfile(item)]
+    dirs = [item for item in os.listdir() if os.path.isdir(item)]
+    
+    with open('listdir.txt', 'w') as f:
+        f.write('files: ' + ', '.join(files) + '\n')
+        f.write('dirs: ' + ', '.join(dirs))
+    
+    print('Содержимое рабочей директории сохранено в файл listdir.txt')
+
+def read_saved_directory_contents():
+    try:
+        with open('listdir.txt', 'r') as f:
+            contents = f.read()
+        print("Содержимое файла listdir.txt:")
+        print(contents)
+    except FileNotFoundError:
+        print("Файл listdir.txt не найден. Сначала сохраните содержимое рабочей директории.")
+
 def os_info():
     print('Информация об операционной системе:')
     print(f'Название ОС: {platform.system()}')
@@ -77,7 +96,9 @@ def main():
         print('8. Создатель программы')
         print('9. Играть в викторину')
         print('10. Мой банковский счет')
-        print('11. Выход')
+        print('11. Сохранить содержимое рабочей директории в файл')
+        print('12. Прочитать файл с сохранённой рабочей директорией')
+        print('13. Выход')
 
         choice = input('Выберите пункт меню: ')
 
@@ -102,6 +123,10 @@ def main():
         elif choice == '10':
             bank_account()
         elif choice == '11':
+            save_directory_contents()
+        elif choice == '12':
+            read_saved_directory_contents()
+        elif choice == '13':
             print('Выход из программы...')
             break
         else:
