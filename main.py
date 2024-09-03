@@ -3,52 +3,84 @@ import shutil
 import platform
 from quiz import quiz
 from bank_account import bank_account
+from decorator import decorator_func
 
+# В этой функции мы использовали тернарный оператор дважды, для создания папки и для вывода сообщения:
 def create_folder():
     folder_name = input('Введите название папки: ')
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
-        print(f'Папка {folder_name} создана.')
-    else:
-        print(f'Папка {folder_name} уже существует.')
+    os.makedirs(folder_name) if not os.path.exists(folder_name) else None
+    print(f'Папка {folder_name} {"создана" if not os.path.exists(folder_name) else "уже существует"}.')
 
+# Старый вариант функции для сравнения:
+# def create_folder():
+#     folder_name = input('Введите название папки: ')
+#     if not os.path.exists(folder_name):
+#         os.makedirs(folder_name)
+#         print(f'Папка {folder_name} создана.')
+#     else:
+#         print(f'Папка {folder_name} уже существует.')
+
+# В этой функции мы использовали тернарный оператор
 def delete_item():
     item_name = input('Введите название файла или папки: ')
     if os.path.exists(item_name):
-        if os.path.isdir(item_name):
-            shutil.rmtree(item_name)
-            print(f'Папка {item_name} удалена.')
-        else:
-            os.remove(item_name)
-            print(f'Файл {item_name} удален.')
+        shutil.rmtree(item_name) if os.path.isdir(item_name) else os.remove(item_name)
+        print(f'{"Папка" if os.path.isdir(item_name) else "Файл"} {item_name} удален{"а" if os.path.isdir(item_name) else ""}.')
     else:
         print(f'Файл или папка {item_name} не найдены.')
 
+# Старый вариант функции для сравнения:
+# def delete_item():
+#     item_name = input('Введите название файла или папки: ')
+#     if os.path.exists(item_name):
+#         if os.path.isdir(item_name):
+#             shutil.rmtree(item_name)
+#             print(f'Папка {item_name} удалена.')
+#         else:
+#             os.remove(item_name)
+#             print(f'Файл {item_name} удален.')
+#     else:
+#         print(f'Файл или папка {item_name} не найдены.')
+
+# В этой функции мы использовали тернарный оператор
 def copy_item():
     item_name = input('Введите название файла или папки: ')
     new_item_name = input('Введите новое название файла или папки: ')
+    
     if os.path.exists(item_name):
-        if os.path.isdir(item_name):
-            shutil.copytree(item_name, new_item_name)
-            print(f'Папка {item_name} скопирована в {new_item_name}.')
-        else:
-            shutil.copy2(item_name, new_item_name)
-            print(f'Файл {item_name} скопирован в {new_item_name}.')
+        shutil.copytree(item_name, new_item_name) if os.path.isdir(item_name) else shutil.copy2(item_name, new_item_name)
+        print(f'{"Папка" if os.path.isdir(item_name) else "Файл"} {item_name} скопирован{"а" if os.path.isdir(item_name) else ""} в {new_item_name}.')
     else:
         print(f'Файл или папка {item_name} не найдены.')
+# Старый вариант функции для сравнения:
+# def copy_item():
+#     item_name = input('Введите название файла или папки: ')
+#     new_item_name = input('Введите новое название файла или папки: ')
+#     if os.path.exists(item_name):
+#         if os.path.isdir(item_name):
+#             shutil.copytree(item_name, new_item_name)
+#             print(f'Папка {item_name} скопирована в {new_item_name}.')
+#         else:
+#             shutil.copy2(item_name, new_item_name)
+#             print(f'Файл {item_name} скопирован в {new_item_name}.')
+#     else:
+#         print(f'Файл или папка {item_name} не найдены.')
 
+@decorator_func
 def list_directory():
     items = os.listdir()
     print('Содержимое рабочей директории:')
     for item in items:
         print(item)
 
+@decorator_func
 def list_folders():
     items = [item for item in os.listdir() if os.path.isdir(item)]
     print('Папки в рабочей директории:')
     for item in items:
         print(item)
 
+@decorator_func
 def list_files():
     items = [item for item in os.listdir() if os.path.isfile(item)]
     print('Файлы в рабочей директории:')
@@ -65,6 +97,8 @@ def save_directory_contents():
     
     print('Содержимое рабочей директории сохранено в файл listdir.txt')
 
+# Добавленна обработка исключений при чтении файла:
+@decorator_func
 def read_saved_directory_contents():
     try:
         with open('listdir.txt', 'r') as f:
@@ -73,13 +107,19 @@ def read_saved_directory_contents():
         print(contents)
     except FileNotFoundError:
         print("Файл listdir.txt не найден. Сначала сохраните содержимое рабочей директории.")
+    except Exception as e:
+        print(f"Произошла ошибка при чтении файла: {e}")
+        print(f"Подробности ошибки: {e}")
+    return None
 
+@decorator_func
 def os_info():
     print('Информация об операционной системе:')
     print(f'Название ОС: {platform.system()}')
     print(f'Версия ОС: {platform.version()}')
     print(f'Архитектура: {platform.architecture()}')
 
+@decorator_func
 def creator_info():
     print('Создатель программы: Руслан')
 
